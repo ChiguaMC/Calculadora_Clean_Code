@@ -11,25 +11,25 @@ import javax.swing.JButton;
  */
 public class Control implements MouseListener {
 
+    
+    //Atributo para poder llamar a la vistaPrincipal y de ahí un Jfram
     private Interface vista;
-    private int primerNumero;
-    private String operando;
-
+    private int primerNumeroDigitado;
+    private String operandoSolicitado;
+    
     public Control(Interface vista) {
         this.vista = vista;
-        this.primerNumero = 0;
-        this.operando = "";
+        this.primerNumeroDigitado = 0;
+        this.operandoSolicitado = "";
     }
 
+    //Esta es la función que se va a llamar desde el main para empezar a controlar.
     public void controlar() {
 
-        //Posiciona la vista en el centro de la pantalla
         this.vista.vistaPrincipal.setLocationRelativeTo(null);
-
-        //Muestra la pantalla
+        
         this.vista.vistaPrincipal.setVisible(true);
 
-        //Agrega los listeners a los botones
         vista.vistaPrincipal.botonCero.addMouseListener(this);
         vista.vistaPrincipal.botonUno.addMouseListener(this);
         vista.vistaPrincipal.botonDos.addMouseListener(this);
@@ -51,7 +51,8 @@ public class Control implements MouseListener {
         vista.vistaPrincipal.botonBorrar.addMouseListener(this);
     }
 
-    public void switchBotonesNumeros(String comandoAccion) {
+    //Si se presionan los botones del 0 al 00
+    public void switchNumeros(String comandoAccion) {
         switch (comandoAccion) {
             case "0":
             case "1":
@@ -70,110 +71,78 @@ public class Control implements MouseListener {
         }
     }
 
-    public void switchBotonesOperadores(String comandoAccion) {
+    //Si se presionan los botones de operaciones excluyendo "=" "primo" "palindromo"
+    public void switchOperadores(String comandoAccion) {
         switch (comandoAccion) {
             case "+":
-                primerNumero = primerNumero + Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
+                primerNumeroDigitado = primerNumeroDigitado + Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
                 break;
             case "-":
-                primerNumero = primerNumero - Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
+                primerNumeroDigitado = primerNumeroDigitado - Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
                 break;
             case "*":
-                primerNumero = primerNumero * Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
+                primerNumeroDigitado = primerNumeroDigitado * Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
                 break;
             case "/":
-                primerNumero = primerNumero / Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
+                primerNumeroDigitado = primerNumeroDigitado / Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
                 break;
             default:
         }
     }
 
-    public void switchOperadoresSubtotal(String comandoAccion) {
+    //Si se presionan los botones de operaciones excluyendo "=" "primo" "palindromo"
+    //Lo hago en un switch nuevo para evitar tener que poner las mismas instrucciones en cada caso del case de arriba
+    public void switchSubtotal(String comandoAccion) {
         switch (comandoAccion) {
             case "+":
             case "-":
             case "*":
             case "/":
-                vista.vistaPrincipal.inputSubtotal.setText(Integer.toString(primerNumero));
+                vista.vistaPrincipal.inputSubtotal.setText(Integer.toString(primerNumeroDigitado));
                 vista.vistaPrincipal.inputPantalla.setText("");
-                this.operando = comandoAccion;
+                this.operandoSolicitado = comandoAccion;
                 break;
             default:
         }
     }
 
-    public void switchOperadoresDelIgual() {
-        switch (this.operando) {
+    //Si se presionan los botones de operaciones excluyendo "=" "primo" "palindromo"
+    //Lo hago en un switch separado para poder poner un if independiente del switch anterior.
+    public void switchOperadoresIgual() {
+        switch (this.operandoSolicitado) {
             case "+":
-                primerNumero += Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
+                primerNumeroDigitado += Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
                 break;
             case "-":
-                primerNumero -= Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
+                primerNumeroDigitado -= Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
                 break;
             case "*":
-                primerNumero *= Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
+                primerNumeroDigitado *= Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
                 break;
             case "/":
-                primerNumero /= Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
+                primerNumeroDigitado /= Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
                 break;
             default:
         }
     }
 
-    public void switchBotonIgual(String comandoAccion) {
+    //Controla el switch del botón "="
+    public void switchIgual(String comandoAccion) {
         switch (comandoAccion) {
             case "=":
-                switchOperadoresDelIgual();
-                vista.vistaPrincipal.inputPantalla.setText(Integer.toString(primerNumero));
-                primerNumero = 0;
+                switchOperadoresIgual();
+                vista.vistaPrincipal.inputPantalla.setText(Integer.toString(primerNumeroDigitado));
+                primerNumeroDigitado = 0;
                 vista.vistaPrincipal.inputSubtotal.setText("");
                 break;
             default:
         }
     }
-
-    public boolean esPrimo(int numeroIntroducido) {
-        for (int i = 2; i < numeroIntroducido; i++) {
-            if (numeroIntroducido % i == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public int voltearNumero(int numeroAVoltear) {
-        int numeroInvertido = 0;
-        while (numeroAVoltear != 0) {
-            int ultimoDigito = numeroAVoltear % 10;
-            numeroInvertido = numeroInvertido * 10 + ultimoDigito;
-            numeroAVoltear = numeroAVoltear / 10;
-        }
-        return numeroInvertido;
-    }
-
-    public boolean compararNumeros(int numeroOriginal, int numeroInvertido) {
-        if (numeroOriginal == numeroInvertido) {
-            return true;
-        }
-        return false;
-    }
-
-    public void accionesBotonesCalculadora(String comandoAccion) {
-
-        try {
-            switchBotonesNumeros(comandoAccion);
-
-            if ((comandoAccion.equals("+") || comandoAccion.equals("-") || comandoAccion.equals("*") || comandoAccion.equals("/")) && (vista.vistaPrincipal.inputSubtotal.getText().isBlank())) {
-                primerNumero = Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
-            } else {
-                switchBotonesOperadores(comandoAccion);
-            }
-
-            switchOperadoresSubtotal(comandoAccion);
-
-            switchBotonIgual(comandoAccion);
-
-            int numeroARevisar = 0;
+    
+    //Este switch controla las funciones restantes no operadoras, primo, palindromo y borrar
+    public void switchPrimoPalindromoBorrar(String comandoAccion)
+    {
+        int numeroARevisar = 0;
 
             switch (comandoAccion) {
                 case "Primo":
@@ -195,10 +164,61 @@ public class Control implements MouseListener {
                 case "Borrar":
                     vista.vistaPrincipal.inputPantalla.setText("");
                     vista.vistaPrincipal.inputSubtotal.setText("");
-                    this.primerNumero = 0;
-                    this.operando = "";
+                    this.primerNumeroDigitado = 0;
+                    this.operandoSolicitado = "";
                     break;
             }
+    }
+
+    //Función que retorna true en caso de que sea un número primo, false en caso de que no lo sea
+    public boolean esPrimo(int numeroIntroducido) {
+        for (int i = 2; i < numeroIntroducido; i++) {
+            if (numeroIntroducido % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //Esta es una función de apoyo para la verificación de número palíndromo. Se encarga de descomponer el número original en residuos (último dígito) y reconstruirlo con sumas en una variable separada
+    public int voltearNumero(int numeroAVoltear) {
+        int numeroInvertido = 0;
+        while (numeroAVoltear != 0) {
+            int ultimoDigito = numeroAVoltear % 10;
+            numeroInvertido = numeroInvertido * 10 + ultimoDigito;
+            numeroAVoltear = numeroAVoltear / 10;
+        }
+        return numeroInvertido;
+    }
+
+    //Compara el número original a revisar si es palíndromo con el número volteado
+    public boolean compararNumeros(int numeroOriginal, int numeroInvertido) {
+        if (numeroOriginal == numeroInvertido) {
+            return true;
+        }
+        return false;
+    }
+
+    //Esta es la función principal en la que se incluyen los main de cada proceso
+    public void accionesCalculadora(String comandoAccion) {
+
+        //Este try lo que hace es ignorar el proceso en caso de que cualquier botón de operación se presione sin que haya un número en pantalla
+        try {
+            switchNumeros(comandoAccion);
+
+            //Revisa si existe un número previamente añadido o no
+            if ((comandoAccion.equals("+") || comandoAccion.equals("-") || comandoAccion.equals("*") || comandoAccion.equals("/")) && (vista.vistaPrincipal.inputSubtotal.getText().isBlank())) {
+                primerNumeroDigitado = Integer.parseInt(vista.vistaPrincipal.inputPantalla.getText());
+            } else {
+                switchOperadores(comandoAccion);
+            }
+
+            switchSubtotal(comandoAccion);
+
+            switchIgual(comandoAccion);
+            
+            switchPrimoPalindromoBorrar(comandoAccion);
+            
         } catch (Exception exception) {
             System.out.print(exception.getMessage());
             System.out.print("\nNo hay nada en pantalla para procesar");
@@ -212,10 +232,11 @@ public class Control implements MouseListener {
         switch (fuenteClick.getSource().getClass().getSimpleName()) {
             case "JButton":
                 JButton boton = (JButton) fuenteClick.getSource();
-                accionesBotonesCalculadora(boton.getActionCommand());
+                accionesCalculadora(boton.getActionCommand());
         }
     }
 
+    //Métodos vacíos porque no son necesarios para la función del programa
     @Override
     public void mousePressed(MouseEvent e) {
 

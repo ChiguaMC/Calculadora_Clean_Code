@@ -7,13 +7,17 @@ import javax.swing.JOptionPane;
  * @author Chigua
  */
 public class Interface {
+    
+    //Este es un JFrame
     public VistaPrincipal vistaPrincipal;
     
+    //Constructor + inicialización del JFrame
     public Interface()
     {
         this.vistaPrincipal = new VistaPrincipal();
     }
     
+    //Mensajes usados desde la vista control
     public void mensajeEsPrimo(String numero)
     {
      JOptionPane.showMessageDialog(vistaPrincipal, "El número " + numero + " es primo", "Primo", JOptionPane.INFORMATION_MESSAGE);
